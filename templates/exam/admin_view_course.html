@@ -1,0 +1,70 @@
+{% extends 'exam/adminbase.html' %}
+{% block content %}
+{%load static%}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <style media="screen">
+    a:link {
+      text-decoration: none;
+    }
+
+    h6 {
+      text-align: center;
+    }
+
+    .row {
+      margin: 100px;
+    }
+  </style>
+</head>
+<br><br>
+<div class="container">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h6 class="panel-title">Тесты</h6>
+    </div>
+    <table class="table table-hover table-bordered" id="dev-table">
+      <thead>
+        <tr>
+        <th>Учитель</th>
+          <th>Тест</th>
+          <th>Всего вопросов</th>
+          <th>Максимальное количество баллов</th>
+          <th> Активность</th>
+          <th></th>
+        </tr>
+      </thead>
+      {% for t in courses %}
+      <tr>
+        <td> {{t.teacher.user.get_full_name}}</td>
+        <td> {{t.course_name}}</td>
+        <td>{{t.question_number}}</td>
+        <td>{{t.total_marks}}</td>
+        {% if t.is_deleted %}
+        <td>Удален</td>
+        {% else %}
+        <td>Активен</td>
+        {% endif %}
+        
+        <td>
+          <a class="btn btn-primary btn-sm" style="border-radius: 0%;" href="{% url 'admin-view-course-marks' t.id  %}"><span class="glyphicon glyphicon-eye-open"></span> Посмотреть результаты</a>
+          <a class="btn btn-primary btn-sm" style="border-radius: 0%;" href="{% url 'admin-see-question' t.id  %}"><span class="glyphicon glyphicon-eye-open"></span>Посмотреть вопросы</a>
+           {% if t.is_deleted %}
+          <a class="btn btn-success btn-xs" style="border-radius: 0%;" href="{% url 'activate-course' t.id  %}"><span class="glyphicon glyphicon-ok"></span></a>
+        {% else %}
+        <a class="btn btn-danger btn-xs" style="border-radius: 0%;" href="{% url 'disable-course' t.id  %}"><span class="glyphicon glyphicon-remove"></span></a>
+        {% endif %}
+          <a class="btn btn-danger btn-xs" style="border-radius: 0%;" href="{% url 'delete-course' t.id  %}"><span class="glyphicon glyphicon-trash"></span></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<br><br><br><br><br><br>
+{% endblock content %}

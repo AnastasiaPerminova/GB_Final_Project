@@ -1,0 +1,73 @@
+{% extends 'teacher/teacherbase.html' %}
+{% block content %}
+{%load static%}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <style media="screen">
+    a:link {
+      text-decoration: none;
+    }
+
+    h6 {
+      text-align: center;
+    }
+
+    .row {
+      margin: 100px;
+    }
+    .container-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+button {
+  height: 30px flex: 10
+}
+  </style>
+</head>
+<br><br>
+<div class="container">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h6 class="panel-title">{{course.course_name}}</h6>
+    </div>
+    <table class="table table-hover table-bordered" id="dev-table">
+      <thead>
+        <tr>
+
+          <th>Вопрос</th>
+         <th>Количество баллов</th>
+          <th></th>
+        </tr>
+      </thead>
+      {% for c in questions %}
+      <tr>
+        <td> {{c.question}}</td>
+        <td>{{c.marks}}</td>
+        <td>
+        <a class="btn btn-primary btn-sm" style="border-radius: 0%;" href="{% url 'see-full-question' c.id  %}"><span class="glyphicon glyphicon-eye-open"></span>Подробнее</a>
+        <a class="btn btn-success btn-xs" style="border-radius:0px;" href="{% url 'teacher-update-question' c.id  %}"><span class="glyphicon glyphicon-edit"></span>Редактировать</a>
+        <a class="btn btn-danger btn-xs" style="border-radius: 0%;" href="{% url 'remove-question' c.id  %}"><span class="glyphicon glyphicon-trash"></span>Удалить</a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  </div>
+
+  <div class="container-buttons">
+  <form action="/teacher/teacher-view-exam" class="inline">
+    <button class="btn btn-success" style="border-radius:0px;" >Тесты</button>
+  </form>
+  <form action="/teacher/teacher-view-question" class="inline">
+      <button class="btn btn-success" style="border-radius:0px;" >Вопросы</button>
+  </form>
+</div>
+
+
+<br><br><br><br><br><br>
+{% endblock content %}

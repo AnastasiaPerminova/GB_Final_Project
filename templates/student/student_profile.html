@@ -1,0 +1,44 @@
+{% extends 'student/studentbase.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  a:link {
+        text-decoration: none;
+      }
+    </style>
+</head>
+
+<h2 style="text-align:left; ">{{student.user.get_full_name}}</h2>
+{% if student.profile_pic %}
+    <img src="{% static student.profile_pic.url %}" alt="Profile Pic" height="375px" />
+{% else %}
+    <img src="{% static 'image/student.png' %}" alt="Profile Pic" height="375px" />
+{% endif %}
+<div class="card">
+<p style="text-align:left"><b> Имя </b> : {{student.user.first_name}}</p>
+    <p style="text-align:left"><b> Фамилия </b> : {{student.user.last_name}}</p>
+    <p style="text-align:left"><b> Имя пользователя </b> : {{student.user.username}}</p>
+    <p style="text-align:left"><b> Email </b> : {{student.user.email}}</p>
+    <p style="text-align:left"><b> Контактный телефон </b> : {{student.mobile}}</p>
+    <p style="text-align:left"><b> Aдрес </b> : {{student.address}}</p>
+
+</div>
+<div>
+<a class="btn btn-success" style="border-radius:0px;" href="update-student" role="button">Редактировать</a>
+</div>
+<div>
+<a class="btn btn-success" style="border-radius:0px;" href="student-change-password" role="button">Поменять пароль</a>
+</div>
+
+
+{% endblock %}

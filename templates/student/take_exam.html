@@ -1,0 +1,54 @@
+{% extends 'student/studentbase.html' %}
+{% block content %}
+{%load static%}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+
+</head>
+<br><br>
+<div class="container my-4">
+    <div class="jumbotron">
+
+        <div class="row">
+
+            <div class="card border-info mx-4 my-4">
+                <div class="card-body text-default">
+
+                    <h4 class="card-title">Информация о тесте :</h4>
+                    <p class="card-text">
+                        </p><ul style="list-style:decimal;">
+                            <li>Тест : {{course.course_name}}</li>
+                            <li>Всего вопросов : {{total_questions}}</li>
+                            <li>Общий балл: {{total_marks}}</li>
+                        </ul>
+                    <p></p>
+
+
+
+                    <h4 class="card-title">Правила :</h4>
+                    <p class="card-text">
+                        </p><ul style="list-style:decimal;">
+                            <li>Все вопросы - это множественный выбор.</li>
+                            <li><span class="text-danger">Только один ответ - правильный.</span></li>
+                            <li>Каждый вопрос может иметь свой балл.</li>
+                            <li>Отвечайте как можно скорее.</li>
+                            <li>Если Вы нажмёте «Обновить» или вернетесь на предыдущую страницу, для Вас появится новый вопрос, и вопрос, на который Вы отвечали, будет засчитан как попытка.</li>
+                            <li>Вопросы отображаются в случайном порядке.</li>
+                            <li>Вы сможете посмотреть свой балл сразу, как ответите на вопрос.</li>
+                        </ul>
+                    <p></p>
+                    <a href="{% url 'start-exam' course.id  %}" class="btn btn-success" style="border-radius:0px;">Начать тестирование</a>
+                </div>  
+                <div class="card-footer">Удачи!</div>
+            </div>  
+        </div>  
+
+    </div>
+</div>
+
+<br><br><br><br><br><br>
+{% endblock content %}

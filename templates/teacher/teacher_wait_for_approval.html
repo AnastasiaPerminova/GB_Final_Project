@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% load widget_tweaks %}
+
+
+  <style media="screen">
+    .jumbotron {
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
+
+    .jumbotron h1 {
+      text-align: center;
+    }
+
+    .alert {
+      margin: 0px;
+    }
+  </style>
+  <body>
+    {% include "exam/navbar.html" %}
+
+      <div class="jumbotron" style="margin-top: 0px;
+        margin-bottom: 0px;">
+        <h1 class="display-4">Здравствуйте, {{request.user.first_name}},</h1>
+        <p class="lead">Ваш аккаунт не был <b>авторизован</b>! <br><br>Ожидайте подтверждения от администратора.<br><br> После подтверждения Вы получите полный доступ к Вашему аккаунту.</p>
+        <hr class="my-4">
+       
+        <p class="lead">
+          <a class="btn btn-danger btn-lg" href="/logout" style="border-radius: 0%;" role="button">Выйти</a>
+        </p>
+      </div>
+
+{% include "exam/footer.html" %}
+  </body>
+</html>

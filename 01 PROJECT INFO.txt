@@ -1,0 +1,14 @@
+**Инструкция по установке веб-приложения "Тестирование онлайн"**
+
+- Установить зависимости: pip install -r requirements.txt
+- Затем, сделать миграцию БД: python manage.py makemigrations
+                              - python manage.py migrate
+- И запустить приложение: python manage.py runserver
+
+
+Для использования аккаунта администратора необходимо создать superuser:
+    - python manage.py createsuperuser
+
+
+Для страницы контакты(contactus) необходимо изменить настройки email в settings.py.
+

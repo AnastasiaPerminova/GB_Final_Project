@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+{% load widget_tweaks %}
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <style>
+
+        form{
+           margin: 50px; 
+          
+        }
+
+    </style>
+  </head>
+  <body>
+    {% include "exam/navbar.html" %}
+ 
+
+
+<br><br><br>
+<div class="container">
+  <h3 style="text-align: center;">Регистрация учителя</h3>
+    <h4 style="text-align: center; color:#8B0000 " >{{ message }}</h4>
+<form action="" method="post" class="post-form" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{userForm.as_p}}
+    {{teacherForm.as_p}}
+
+    <button type="submit" class="btn btn-success" style="border-radius:0px;">Зарегистрироваться</button>
+  </form>
+</div>
+
+
+<br><br>
+{% include "exam/footer.html" %}
+  </body>
+</html>
