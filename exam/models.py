@@ -40,6 +40,7 @@ def set_question_number(course):
 
 def set_total_marks(course):
     questions = Question.objects.all().filter(course=course)
+    course.total_marks = 0
     for q in questions:
         course.total_marks += q.marks
     course.save()
