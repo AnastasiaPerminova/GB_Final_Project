@@ -116,14 +116,7 @@ def calculate_marks_view(request):
         result.student = student
         result.save()
 
-        return HttpResponseRedirect('view-result')
-
-
-@login_required(login_url='studentlogin')
-@user_passes_test(is_student)
-def view_result_view(request):
-    courses = QMODEL.Course.objects.all().filter(is_published=True)
-    return render(request, 'student/view_result.html', {'courses': courses})
+        return HttpResponseRedirect(f'check-marks/{course.id}')
 
 
 @login_required(login_url='studentlogin')
