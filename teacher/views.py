@@ -171,7 +171,7 @@ def teacher_unpublish_exam_view(request, pk):
 @user_passes_test(is_teacher)
 def teacher_view_course_marks_view(request, pk):
     course = QMODEL.Course.objects.get(id=pk)
-    results = QMODEL.Result.objects.all().filter(course=course)
+    results = QMODEL.Result.objects.all().filter(exam=course)
     return render(request, 'teacher/teacher-view-course-marks.html', {'results': results})
 
 
