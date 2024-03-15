@@ -68,7 +68,7 @@ def teacher_dashboard_view(request):
                 students.append(res.student)
 
     dict = {
-        'total_course': courses.count(),
+        'total_course': courses_q.count(),
         'total_question': questions,
         'total_student': len(students)
     }
