@@ -160,7 +160,7 @@ def student_update_profile(request):
             user.save()
             student_form.save()
             student.save()
-        return redirect('teacher-profile')
+        return redirect('student-profile')
     else:
         user_form = SFORM.UserUpdateForm(instance=user)
         student_form = SFORM.StudentForm(instance=student)
