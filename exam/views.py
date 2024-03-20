@@ -22,24 +22,49 @@ def home_view(request):
 
 
 def is_teacher(user):
+    """
+
+    Проверка при аутентификации пользователя, является ли он Учителем.
+
+    """
     return user.groups.filter(name='TEACHER').exists()
 
 
 def is_student(user):
+    """
+
+    Проверка при аутентификации пользователя, является ли он Студентом.
+
+    """
     return user.groups.filter(name='STUDENT').exists()
 
 
 def is_staff(user):
+    """
+
+    Проверка при аутентификации пользователя, обладает ли он правами администратора.
+
+    """
     return user.is_staff
 
 
 @login_required
 def user_logout_view(request):
+    """
+
+    Страница после  перехода по кнопке "Выйти"
+
+    """
     logout(request)
     return render(request, 'exam/logout.html', {})
 
 
 def afterlogin_view(request):
+    """
+
+    Страница после  авторизации пользователя.
+
+    """
     if is_student(request.user):
         return redirect('student/student-dashboard')
 
@@ -55,6 +80,11 @@ def afterlogin_view(request):
 
 
 def adminclick_view(request):
+    """
+
+    Кнопка "Администратор" в шапке главной страницы.
+
+    """
     if request.user.is_authenticated:
         return HttpResponseRedirect('afterlogin')
     return HttpResponseRedirect('adminlogin')
@@ -63,6 +93,11 @@ def adminclick_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_dashboard_view(request):
+    """
+
+    Главная страница пользователя - Администратор после аутентификации.
+
+    """
     dict = {
         'total_student': SMODEL.Student.objects.all().count(),
         'total_teacher': TMODEL.Teacher.objects.all().filter(status=True).count(),
@@ -75,6 +110,11 @@ def admin_dashboard_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_teacher_view(request):
+    """
+
+    Учителя.
+
+    """
     dict = {
         'total_teacher': TMODEL.Teacher.objects.all().filter(status=True).count(),
         'pending_teacher': TMODEL.Teacher.objects.all().filter(status=False).count(),
@@ -85,6 +125,11 @@ def admin_teacher_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_view_teacher_view(request):
+    """
+
+    Все зарегистрированные учителя.
+
+    """
     teachers = TMODEL.Teacher.objects.all().filter(status=True)
     return render(request, 'exam/admin_view_teacher.html', {'teachers': teachers})
 
@@ -92,6 +137,11 @@ def admin_view_teacher_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def update_teacher_view(request, pk):
+    """
+
+    Редактировать информацию в профиле Учителя.
+
+    """
     teacher = TMODEL.Teacher.objects.get(id=pk)
     user = TMODEL.User.objects.get(id=teacher.user_id)
     if request.method == 'POST':
@@ -113,6 +163,11 @@ def update_teacher_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_change_teacher_password_view(request, pk):
+    """
+
+    Смена пароля в профиле Учителя.
+
+    """
     teacher = TMODEL.Teacher.objects.get(id=pk)
     user = teacher.user
 
@@ -138,6 +193,11 @@ def admin_change_teacher_password_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def disable_teacher_view(request, pk):
+    """
+
+    Отключить аккаунт Учителя.
+
+    """
     teacher = TMODEL.Teacher.objects.get(id=pk)
     user = User.objects.get(id=teacher.user_id)
     user.is_active = False
@@ -148,6 +208,11 @@ def disable_teacher_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def activate_teacher_view(request, pk):
+    """
+
+    Активировать аккаунт Учителя.
+
+    """
     teacher = TMODEL.Teacher.objects.get(id=pk)
     user = User.objects.get(id=teacher.user_id)
     user.is_active = True
@@ -158,6 +223,12 @@ def activate_teacher_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def delete_teacher_view(request, pk):
+    """
+
+    Удалить аккаунт Учителя из Базы Данных.
+
+    """
+
     teacher = TMODEL.Teacher.objects.get(id=pk)
     user = User.objects.get(id=teacher.user_id)
     user.delete()
@@ -168,6 +239,11 @@ def delete_teacher_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_view_pending_teacher_view(request):
+    """
+
+    Просмотр учителей, ожидающих авторизации.
+
+    """
     teachers = TMODEL.Teacher.objects.all().filter(status=False)
     return render(request, 'exam/admin_view_pending_teacher.html', {'teachers': teachers})
 
@@ -175,6 +251,11 @@ def admin_view_pending_teacher_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def approve_teacher_view(request, pk):
+    """
+
+    Подтверждение авторизации учителя.
+
+    """
     teacher = TMODEL.Teacher.objects.get(id=pk)
     teacher.status = True
     teacher.save()
@@ -184,6 +265,11 @@ def approve_teacher_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def reject_teacher_view(request, pk):
+    """
+
+    Отклонение авторизации учителя.
+
+    """
     teacher = TMODEL.Teacher.objects.get(id=pk)
     user = User.objects.get(id=teacher.user_id)
     user.delete()
@@ -194,6 +280,11 @@ def reject_teacher_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_student_view(request):
+    """
+
+    Кнопка студенты боковой панели.
+
+    """
     dict = {
         'total_student': SMODEL.Student.objects.all().count(),
     }
@@ -203,6 +294,11 @@ def admin_student_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_view_student_view(request):
+    """
+
+    Список всех студентов.
+
+    """
     students = SMODEL.Student.objects.all()
     return render(request, 'exam/admin_view_student.html', {'students': students})
 
@@ -210,6 +306,11 @@ def admin_view_student_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def update_student_view(request, pk):
+    """
+
+    Редактировать информацию в профиле Студента.
+
+    """
     student = SMODEL.Student.objects.get(id=pk)
     user = SMODEL.User.objects.get(id=student.user_id)
     if request.method == 'POST':
@@ -231,6 +332,11 @@ def update_student_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_change_student_password_view(request, pk):
+    """
+
+    Смена пароля в профиле Студента.
+
+    """
     student = SMODEL.Student.objects.get(id=pk)
     user = student.user
 
@@ -256,6 +362,11 @@ def admin_change_student_password_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def disable_student_view(request, pk):
+    """
+
+    Отключить аккаунт Студента.
+
+    """
     student = SMODEL.Student.objects.get(id=pk)
     user = User.objects.get(id=student.user_id)
     user.is_active = False
@@ -266,6 +377,11 @@ def disable_student_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def activate_student_view(request, pk):
+    """
+
+    Активировать аккаунт Студента.
+
+    """
     student = SMODEL.Student.objects.get(id=pk)
     user = User.objects.get(id=student.user_id)
     user.is_active = True
@@ -276,6 +392,11 @@ def activate_student_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def delete_student_view(request, pk):
+    """
+
+    Удалить аккаунт Студента из Базы Данных.
+
+    """
     student = SMODEL.Student.objects.get(id=pk)
     user = User.objects.get(id=student.user_id)
     user.delete()
@@ -286,12 +407,22 @@ def delete_student_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_course_view(request):
+    """
+
+    Кнопка Тесты боковой панели.
+
+    """
     return render(request, 'exam/admin_course.html')
 
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_add_course_view(request):
+    """
+
+    Добавить тест.
+
+    """
     course_form = forms.CourseForm()
     if request.method == 'POST':
         course_form = forms.CourseForm(request.POST)
@@ -307,6 +438,11 @@ def admin_add_course_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_view_course_view(request):
+    """
+
+    Список всех тестов.
+
+    """
     courses = models.Course.objects.all()
     return render(request, 'exam/admin_view_course.html', {'courses': courses})
 
@@ -314,6 +450,11 @@ def admin_view_course_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def delete_course_view(request, pk):
+    """
+
+    Удалить тест из Базы Данных.
+
+    """
     course = models.Course.objects.get(id=pk)
     course.delete()
     return HttpResponseRedirect('/admin-view-course')
@@ -322,6 +463,11 @@ def delete_course_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def disable_course_view(request, pk):
+    """
+
+    Отключить тест.
+
+    """
     course = models.Course.objects.get(id=pk)
     course.is_deleted = True
     course.save()
@@ -335,6 +481,11 @@ def disable_course_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def activate_course_view(request, pk):
+    """
+
+    Активировать тест.
+
+    """
     course = models.Course.objects.get(id=pk)
     course.is_deleted = False
     course.save()
@@ -348,12 +499,22 @@ def activate_course_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_question_view(request):
+    """
+
+    Кнопка вопросы боковой панели.
+
+    """
     return render(request, 'exam/admin_question.html')
 
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_see_question_view(request, pk):
+    """
+
+    Список вопросов по конкретному тесту.
+
+    """
     course = models.Course.objects.get(id=pk)
     questions = models.Question.objects.all().filter(course_id=pk)
     return render(request, 'exam/admin_see_question.html', {'questions': questions, 'course': course})
@@ -362,6 +523,7 @@ def admin_see_question_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_add_question_view(request):
+    """Администратор добавляет вопрос."""
     question_form = forms.AdminQuestionForm()
     if request.method == 'POST':
         question_form = forms.AdminQuestionForm(request.POST)
@@ -379,6 +541,11 @@ def admin_add_question_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_view_question_view(request):
+    """
+
+    Список всех вопросов.
+
+    """
     questions = models.Question.objects.all()
     return render(request, 'exam/admin_view_question.html', {'questions': questions})
 
@@ -386,6 +553,11 @@ def admin_view_question_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def view_question_view(request, pk):
+    """
+
+    Список вопросов по конкретному тесту.
+
+    """
     questions = models.Question.objects.all().filter(course_id=pk)
     return render(request, 'exam/view_question.html', {'questions': questions})
 
@@ -393,6 +565,10 @@ def view_question_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_see_full_question_view(request, pk):
+    """
+    Просмотр подробной информации о вопросе.
+
+    """
     question = get_object_or_404(models.Question, pk=pk)
     return render(request, 'exam/see_full_question.html', {'question': question})
 
@@ -400,6 +576,11 @@ def admin_see_full_question_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_update_question_view(request, pk):
+    """
+
+    Редактирование вопроса.
+
+    """
     question_id = pk
     question = models.Question.objects.get(id=question_id)
     course = question.course
@@ -427,6 +608,11 @@ def admin_update_question_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def delete_question_view(request, pk):
+    """
+
+    Удалить Вопрос из Базы Данных.
+
+    """
     question = models.Question.objects.get(id=pk)
     question.delete()
     return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
@@ -435,6 +621,12 @@ def delete_question_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def disable_question_view(request, pk):
+    """
+
+    Отключить Вопрос.
+
+    """
+
     question = models.Question.objects.get(id=pk)
     question.is_deleted = True
     question.save()
@@ -444,6 +636,11 @@ def disable_question_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def activate_question_view(request, pk):
+    """
+
+    Включить  Вопрос.
+
+     """
     question = models.Question.objects.get(id=pk)
     question.is_deleted = False
     question.save()
@@ -453,6 +650,11 @@ def activate_question_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_view_student_marks_view(request):
+    """
+
+    Просмотр результатов.
+
+     """
     students = SMODEL.Student.objects.all()
     return render(request, 'exam/admin_view_student_marks.html', {'students': students})
 
@@ -460,6 +662,11 @@ def admin_view_student_marks_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_view_marks_view(request, pk):
+    """
+
+    Список тестов с резузльтатами
+
+    """
     courses = models.Course.objects.all()
     response = render(request, 'exam/admin_view_marks.html', {'courses': courses})
     response.set_cookie('student_id', str(pk))
@@ -469,6 +676,11 @@ def admin_view_marks_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_check_marks_view(request, pk):
+    """
+
+    Результаты конкретного теста у конкретного студента.
+
+    """
     course = models.Course.objects.get(id=pk)
     student_id = request.COOKIES.get('student_id')
     student = SMODEL.Student.objects.get(id=student_id)
@@ -480,6 +692,11 @@ def admin_check_marks_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_view_course_marks_view(request, pk):
+    """
+
+    Результаты конкретного теста.
+
+    """
     course = models.Course.objects.get(id=pk)
     results = models.Result.objects.all().filter(exam=course)
     return render(request, 'exam/admin-view-course-marks.html', {'results': results})
@@ -488,6 +705,11 @@ def admin_view_course_marks_view(request, pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_staff)
 def admin_change_password_view(request):
+    """
+
+    Смена пароля администратора.
+
+    """
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
@@ -506,11 +728,11 @@ def admin_change_password_view(request):
     return render(request, 'exam/admin_password_change.html', {'form': form})
 
 
-def aboutus_view(request):
-    return render(request, 'exam/aboutus.html')
-
-
 def contactus_view(request):
+    """
+    Контакты. Форма обратной связи.
+
+    """
     sub = forms.ContactusForm()
     if request.method == 'POST':
         sub = forms.ContactusForm(request.POST)

@@ -14,12 +14,20 @@ from . import forms, models
 
 
 def studentclick_view(request):
+    """
+    Кнопка "Студент" в шапке главной страницы.
+
+    """
     if request.user.is_authenticated:
         return HttpResponseRedirect('afterlogin')
     return render(request, 'student/studentclick.html')
 
 
 def student_signup_view(request):
+    """
+    Страница регистрации Студента.
+
+    """
     user_form = forms.StudentUserForm()
     student_form = forms.StudentForm()
     mydict = {'userForm': user_form, 'studentForm': student_form}
@@ -40,12 +48,22 @@ def student_signup_view(request):
 
 
 def is_student(user):
+    """
+
+    Проверка при аутентификации пользователя, является ли он Студентом.
+
+    """
     return user.groups.filter(name='STUDENT').exists()
 
 
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def student_dashboard_view(request):
+    """
+
+    Главная страница пользователя - Студент после авторизации.
+
+    """
     dict = {
 
         'total_course': QMODEL.Course.objects.all().filter(is_published=True).filter(is_deleted=False).count(),
@@ -57,6 +75,10 @@ def student_dashboard_view(request):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def student_exam_view(request):
+    """
+    Доступные тесты.
+
+    """
     courses = QMODEL.Course.objects.all().filter(is_published=True).filter(is_deleted=False)
     student = SMODEL.Student.objects.get(user_id=request.user.id)
     results = QMODEL.Result.objects.all().filter(student=student)
@@ -70,6 +92,10 @@ def student_exam_view(request):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def take_exam_view(request, pk):
+    """
+    Информация о прохождении теста после перехода по кнопке начать тестирование.
+
+    """
     course = QMODEL.Course.objects.get(id=pk)
     total_questions = QMODEL.Question.objects.all().filter(course=course).count()
     questions = QMODEL.Question.objects.all().filter(course=course)
@@ -81,9 +107,15 @@ def take_exam_view(request, pk):
                   {'course': course, 'total_questions': total_questions, 'total_marks': total_marks})
 
 
+
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def start_exam_view(request, pk):
+    """
+
+    Прохождение теста студентом.
+
+    """
     course = QMODEL.Course.objects.get(id=pk)
     questions = QMODEL.Question.objects.all().filter(course=course)
     if request.method == 'POST':
@@ -96,6 +128,11 @@ def start_exam_view(request, pk):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def calculate_marks_view(request):
+    """
+
+    Функция подсчета результатов теста.
+
+    """
     if request.COOKIES.get('course_id') is not None:
         course_id = request.COOKIES.get('course_id')
         course = QMODEL.Course.objects.get(id=course_id)
@@ -122,6 +159,10 @@ def calculate_marks_view(request):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def check_marks_view(request, pk):
+    """
+    Результаты по конкретному тесту у студента.
+
+    """
     course = QMODEL.Course.objects.get(id=pk)
     student = models.Student.objects.get(user_id=request.user.id)
     results = QMODEL.Result.objects.all().filter(exam=course).filter(student=student)
@@ -131,6 +172,11 @@ def check_marks_view(request, pk):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def student_marks_view(request):
+    """
+
+    Результаты. Вывод списка тестов, которые Студент уже прошел.
+
+    """
     student = SMODEL.Student.objects.get(user_id=request.user.id)
     results = QMODEL.Result.objects.all().filter(student=student)
     attempted_courses = []
@@ -143,6 +189,10 @@ def student_marks_view(request):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def student_profile(request):
+    """
+    Профиль Студента.
+
+    """
     student = models.Student.objects.get(user_id=request.user.id)
     return render(request, 'student/student_profile.html', context={'student': student})
 
@@ -150,6 +200,10 @@ def student_profile(request):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def student_update_profile(request):
+    """
+    Обновить информацию в профиле Студента.
+
+    """
     student = SMODEL.Student.objects.get(user_id=request.user.id)
     user = SMODEL.User.objects.get(id=student.user_id)
     if request.method == 'POST':
@@ -171,6 +225,11 @@ def student_update_profile(request):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def student_view_teachers_view(request):
+    """
+
+    Учителя. Список всех учителей, зарегестированных на платформе.
+
+    """
     teachers = TMODEL.Teacher.objects.all()
     return render(request, 'student/student_view_teachers.html', context={'teachers': teachers})
 
@@ -178,6 +237,11 @@ def student_view_teachers_view(request):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def student_view_teacher_courses_view(request, pk):
+
+    """
+    Просмотр опубликованных тестов конкретного учителя.
+
+    """
     teacher = TMODEL.Teacher.objects.get(id=pk)
     courses = QMODEL.Course.objects.all().filter(teacher=teacher).filter(is_published=True).filter(is_deleted=False)
     student = SMODEL.Student.objects.get(user_id=request.user.id)
@@ -193,6 +257,10 @@ def student_view_teacher_courses_view(request, pk):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def student_change_password_view(request):
+    """
+    Смена пароля профиля Студента.
+
+    """
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():

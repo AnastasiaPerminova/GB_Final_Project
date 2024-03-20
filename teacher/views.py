@@ -17,12 +17,21 @@ from . import forms, models
 
 # for showing signup/login button for teacher
 def teacherclick_view(request):
+    """
+
+    Кнопка "Учитель" в шапке главной страницы.
+
+    """
     if request.user.is_authenticated:
         return HttpResponseRedirect('afterlogin')
     return render(request, 'teacher/teacherclick.html')
 
 
 def teacher_signup_view(request):
+    """
+     Страница регистрации учителя.
+
+     """
     if request.method == 'POST':
         user_form = forms.UserForm(request.POST)
         teacher_form = forms.TeacherForm(request.POST, request.FILES)
@@ -47,12 +56,22 @@ def teacher_signup_view(request):
 
 
 def is_teacher(user):
+    """
+
+    Проверка при аутентификации пользователя, является ли он Учителем.
+
+    """
     return user.groups.filter(name='TEACHER').exists()
 
 
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_dashboard_view(request):
+    """
+
+    Главная страница пользователя - Учитель после авторизации.
+
+    """
     teacher = models.Teacher.objects.get(user_id=request.user.id)
     courses = QMODEL.Course.objects.all().filter(teacher=teacher)
     courses_q = QMODEL.Course.objects.all().filter(teacher=teacher).filter(is_deleted=False)
@@ -78,6 +97,11 @@ def teacher_dashboard_view(request):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_view_students_view(request):
+    """
+
+    Студенты. Вывод списка студентов, которые  уже прошли хотя бы один тест Учителя.
+
+    """
     teacher = models.Teacher.objects.get(user_id=request.user.id)
     courses = QMODEL.Course.objects.all().filter(teacher=teacher)
     students = []
@@ -92,6 +116,11 @@ def teacher_view_students_view(request):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_view_student_marks_view(request, pk):
+    """
+
+    Список пройденных тестов Учителя у конкретного студента.
+
+    """
     teacher = models.Teacher.objects.get(user_id=request.user.id)
     student = SMODEL.Student.objects.get(id=pk)
     courses = QMODEL.Course.objects.all().filter(teacher=teacher)
@@ -108,6 +137,12 @@ def teacher_view_student_marks_view(request, pk):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_сheck_student_marks_view(request, pk):
+    """
+
+    Реультаты конкретного студента по конкретному тесту.
+
+    """
+
     course = QMODEL.Course.objects.get(id=pk)
     student_id = request.COOKIES.get('student_id')
     student = SMODEL.Student.objects.get(id=student_id)
@@ -120,12 +155,21 @@ def teacher_сheck_student_marks_view(request, pk):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_exam_view(request):
+    """
+    Страница по кнопке Редактирование тестов.
+
+    """
     return render(request, 'teacher/teacher_exam.html')
 
 
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_view_exam_view(request):
+    """
+
+    Тесты.Список всех тестов Учителя.
+
+    """
     teacher = models.Teacher.objects.get(user_id=request.user.id)
     courses = QMODEL.Course.objects.all().filter(teacher=teacher).filter(is_deleted=False)
     return render(request, 'teacher/teacher_view_exam.html', {'courses': courses})
@@ -134,6 +178,11 @@ def teacher_view_exam_view(request):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_add_exam_view(request):
+    """
+
+    Добавить тест.
+
+    """
     course_form = QFORM.CourseForm()
     if request.method == 'POST':
         course_form = QFORM.CourseForm(request.POST)
@@ -152,6 +201,11 @@ def teacher_add_exam_view(request):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_publish_exam_view(request, pk):
+    """
+
+    Опубликовать тест.
+
+    """
     course = QMODEL.Course.objects.get(id=pk)
     course.is_published = True
     course.save()
@@ -161,6 +215,11 @@ def teacher_publish_exam_view(request, pk):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_unpublish_exam_view(request, pk):
+    """
+
+    Снять тест с публикации.
+
+    """
     course = QMODEL.Course.objects.get(id=pk)
     course.is_published = False
     course.save()
@@ -170,6 +229,11 @@ def teacher_unpublish_exam_view(request, pk):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_view_course_marks_view(request, pk):
+    """
+
+    Просмотр результатов по конкретному тесту.
+
+    """
     course = QMODEL.Course.objects.get(id=pk)
     results = QMODEL.Result.objects.all().filter(exam=course)
     return render(request, 'teacher/teacher-view-course-marks.html', {'results': results})
@@ -178,6 +242,11 @@ def teacher_view_course_marks_view(request, pk):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def delete_exam_view(request, pk):
+    """
+
+    Удалить тест.
+
+    """
     course = QMODEL.Course.objects.get(id=pk)
     course.is_deleted = True
     course.save()
@@ -191,12 +260,22 @@ def delete_exam_view(request, pk):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_question_view(request):
+    """
+
+    Кнопка Редактирование вопросов.
+
+    """
     return render(request, 'teacher/teacher_question.html')
 
 
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_update_question_view(request, pk):
+    """
+
+    Редактировать вопрос.
+
+    """
     question_id = pk
     question = QMODEL.Question.objects.get(id=question_id)
     course = question.course
@@ -220,6 +299,11 @@ def teacher_update_question_view(request, pk):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_add_question_course_view(request, pk):
+    """
+
+    Добавить вопрос.
+
+    """
     question_form = QFORM.TeacherQuestionForm()
     course = QMODEL.Course.objects.get(id=pk)
     if request.method == 'POST':
@@ -241,6 +325,11 @@ def teacher_add_question_course_view(request, pk):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_view_question_view(request):
+    """
+
+    Вопросы. Список всех вопросов Учителя.
+
+    """
     teacher = models.Teacher.objects.get(user_id=request.user.id)
     courses = QMODEL.Course.objects.all().filter(teacher=teacher).filter(is_deleted=False)
     all_questions = []
@@ -255,6 +344,11 @@ def teacher_view_question_view(request):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def see_question_view(request, pk):
+    """
+
+    Список вопросов по конкретному тесту.
+
+    """
     course = QMODEL.Course.objects.get(id=pk)
     questions = QMODEL.Question.objects.all().filter(course_id=pk)
 
@@ -264,6 +358,11 @@ def see_question_view(request, pk):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def see_full_question_view(request, pk):
+    """
+
+    Подробная информация по вопросу.
+
+    """
     question = get_object_or_404(QMODEL.Question, pk=pk)
     return render(request, 'teacher/see_full_question.html', {'question': question})
 
@@ -271,6 +370,11 @@ def see_full_question_view(request, pk):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def remove_question_view(request, pk):
+    """
+
+    Удалить вопрос.
+
+    """
     question = QMODEL.Question.objects.get(id=pk)
     question.course.is_published = False
     question.course.save()
@@ -282,6 +386,10 @@ def remove_question_view(request, pk):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_update_profile(request):
+    """
+    Обновить информацию в профиле Учителя.
+
+    """
     teacher = models.Teacher.objects.get(user_id=request.user.id)
     user = TMODEL.User.objects.get(id=teacher.user_id)
     if request.method == 'POST':
@@ -303,6 +411,11 @@ def teacher_update_profile(request):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_profile(request):
+    """
+
+    Профиль Учителя.
+
+    """
     teacher = models.Teacher.objects.get(user_id=request.user.id)
     return render(request, 'teacher/teacher_profile.html', context={'teacher': teacher})
 
@@ -310,6 +423,11 @@ def teacher_profile(request):
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_change_password_view(request):
+    """
+
+    Смена пароля профиля Учителя.
+
+    """
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
